@@ -1,0 +1,23 @@
+POST http://localhost:3001/users/
+Content-Type : application/json
+
+{
+    "username" : "testaccount2",
+    "password" : "testaccount2",
+    "email" : "testaccount2@gmail.com"
+}
+
+###
+
+GET http://localhost:3001/users/NasirGriffin/
+Content-Type : application/json
+
+###
+POST http://localhost:3001/workouts/
+Content-Type : application/json
+
+{
+    "userId" : 1,
+    "name" : "Overpowered's First Workout!"
+}
+
