@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import User
 from .models import Workout
 from .models import Exercise
+from .models import User_Exercise
 from .models import Set
 from .serializers import UserSerializer
 from .serializers import WorkoutSerializer
@@ -136,9 +137,8 @@ class CustomExerciseViewset(APIView):
         ##Create a new Exercise
         name = request.data.get('name')
         imageUrl = request.data.get('imageUrl')
-        workoutId = request.data.get('workoutId')
 
-        newExercise = Exercise(name = name, Workout_id = workoutId,  imageUrl = imageUrl)
+        newExercise = Exercise(name = name,  imageUrl = imageUrl)
 
         try:
             newExercise.save()
@@ -167,18 +167,49 @@ class CustomSetViewset(APIView):
     def post(self, request, *args, **kwargs):
         ##Create a new Set
         reps = request.data.get('reps')
-        exerciseId = request.data.get('exerciseId')
+        userExerciseId = request.data.get('userExerciseId')
         weight = request.data.get('weight')
         distance = request.data.get('distance')
         time = request.data.get('time')
         
 
-        newSet = Set(reps = reps, exercise_id = exerciseId, weight = weight, distance = distance, time = time)
+        newSet = Set(reps = reps, user_exercise_id = userExerciseId, weight = weight, distance = distance, time = time)
 
         try:
             newSet.save()
             setSerializer = SetSerializer(newSet)
             return Response(setSerializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(str(e))
+            return Response({"Cannot save this set" : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class CustomUserExerciseViewset(APIView):
+
+    def get(self, request, *args, **kwargs):
+        #get a user exercise by id and name
+        user_exercise_id = kwargs.get('id')
+
+        if user_exercise_id:
+            try:
+                user_exercise = Set.objects.get(id=user_exercise_id)
+                userExerciseSerializer = SetSerializer(user_exercise)
+                return Response(userExerciseSerializer.data, status=status.HTTP_200_OK)
+            except:
+                return Response({"error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        return Response({"error"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def post(self, request, *args, **kwargs):
+        ##Create a new Set
+        exerciseId = request.data.get('exerciseId')
+        workoutId = request.data.get('workoutId')
+        
+        newUserExercise = User_Exercise(exerciseId = exerciseId, workoutId = workoutId)
+
+        try:
+            newUserExercise.save()
+            newUserExerciseSerializer = NewUserSerializer(newUserExercise)
+            return Response(newUserExerciseSerializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(str(e))
             return Response({"Cannot save this set" : str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -12,12 +12,14 @@ class Workout(models.Model):
 
 class Exercise(models.Model):
     name = models.CharField(max_length=255, default="Exercise")
-    workout = models.ForeignKey(Workout, on_delete=models.CASCADE) 
     imageUrl = models.CharField(max_length=255)
 
+class User_Exercise(models.Model):
+    workout = models.ForeignKey(Workout, on_delete=models.CASCADE) 
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
 
 class Set(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    user_exercise = models.ForeignKey(User_Exercise, on_delete=models.CASCADE)
     weight = models.IntegerField(null=True)
     distance = models.IntegerField(null=True)
     time = models.IntegerField(null=True)    
